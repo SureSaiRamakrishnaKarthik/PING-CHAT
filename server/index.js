@@ -38,12 +38,19 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "https://ping-chat-backend.onrender.com",
-      "https://*.vercel.app", // Allow all Vercel deployments
-      "https://*.vercel.app/", // Allow with trailing slash
-    ],
+    origin: (origin, callback) => {
+      const allowed = [
+        /^http:\/\/localhost:3000$/,
+        /^https:\/\/.*\.vercel\.app$/,
+        /^https:\/\/.*\.onrender\.com$/,
+      ];
+      // Allow non-browser clients (no origin) and known domains
+      if (!origin || allowed.some((re) => re.test(origin))) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST"],
   },
