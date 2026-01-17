@@ -31,6 +31,15 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/cloud", cloudRoutes);
 
+// Root and health endpoints for Render and debugging
+app.get("/", (req, res) => {
+  res.status(200).send("Ping Chat API is running");
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server running on Port ${PORT}`);
